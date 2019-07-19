@@ -177,7 +177,6 @@ export default {
       const bestLevel = this.displayLangDependence();
       for(let rank in this.evals) {
         if(rank === bestLevel) {
-          console.log(rank);
           return this.evals[rank];
         }
       }
