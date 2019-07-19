@@ -1,38 +1,42 @@
 <template>
   <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
+    <v-toolbar fixed app>
+      <v-toolbar-side-icon>
+        <v-icon>casino</v-icon>
+      </v-toolbar-side-icon>
+      <v-toolbar-title>
+        bodoge.hikaku
       </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
     </v-toolbar>
-
-    <v-content>
-      <HelloWorld/>
-    </v-content>
+    <v-container mt-5>
+      <v-layout align-space-around justify-space-around fill-height>
+        <v-flex xs6>
+          <v-card>
+            <v-card-text class="teal lighten-3">
+              <search></search>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+        <v-flex xs6>
+          <v-card>
+            <v-card-text class="lime lighten-3">
+              <search></search>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </v-app>
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import search from "@/components/Search.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  },
-  data () {
-    return {
-      //
-    }
+    search
   }
-}
+};
 </script>
