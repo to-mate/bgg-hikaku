@@ -136,7 +136,6 @@ export default {
           this.selectGame.langDependence = data.getElementsByTagName("poll")[2];
         })
         .finally(() => {
-          console.log(this.selectGame)
           this.isDisplay = true;
           this.searchWords = "";
         })
