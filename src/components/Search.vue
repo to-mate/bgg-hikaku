@@ -13,7 +13,7 @@
     <v-layout justify-center>
       <v-card v-if="isDisplay">
         <v-img :src="selectGame.thumbnail.innerHTML" width="540px" height="500px" style="object-fit: scale-down"></v-img>
-        <v-card-title>{{ selectGame.name }}</v-card-title>
+        <v-card-title class="display-1 font-weight-bold">{{ selectGame.name }}</v-card-title>
         <v-list v-for="(content, key) in selectGame" v-if="key !== 'name' && key !== 'thumbnail' && content !== false">
           <v-list-tile>
             <v-list-tile-avatar>
