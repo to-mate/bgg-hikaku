@@ -37,12 +37,12 @@
             </v-list-tile-content>
             <v-list-tile-content v-else-if="key === 'numPlayer'">
               <v-list-tile-title>
-                {{ content.min.innerHTML }} ~ {{ content.max.innerHTML }}
+                {{ content.min.getAttribute("value") }} ~ {{ content.max.getAttribute("value") }}
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-content v-else>
               <v-list-tile-title>
-                {{ content.innerHTML }}
+                {{ content.getAttribute("value") }}
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -55,8 +55,8 @@
 <script>
 import _ from 'lodash';
 
-const baseURI = "https://www.boardgamegeek.com/xmlapi/";
-const baseURIVer2 = "https://www.boardgamegeek.com/xmlapi2/";
+
+const baseURI = "https://www.boardgamegeek.com/xmlapi2/";
 
 export default {
   name: "search",
@@ -96,7 +96,7 @@ export default {
     searchGames: _.throttle(function(){
       this.games = [];
       if(this.searchWords !== "") {
-        const URI = baseURIVer2 + "search?query=" + this.searchWords + "&type=boardgame";
+        const URI = baseURI+ "search?query=" + this.searchWords + "&type=boardgame";
         this.$axios
           .get(URI, {
             responseType: "document"
@@ -117,7 +117,7 @@ export default {
     searchDetail(event) {
       const targetGame = event.target.firstElementChild;
       this.selectGame.name = targetGame.innerHTML;
-      const URI = baseURI + "boardgame/" + targetGame.className;
+      const URI = baseURI + "thing?id=" + targetGame.className + "type=boardgame";
       this.$axios
         .get(URI, {
           responseType: "document"
@@ -131,12 +131,12 @@ export default {
             max: data.getElementsByTagName("maxplayers")[0]
           };
           this.selectGame.time = data.getElementsByTagName("playingtime")[0];
-          this.selectGame.publisher = data.getElementsByTagName("boardgamepublisher")[0];
-          const poll = data.getElementsByTagName("poll")
-          this.selectGame.suggestPlayer = poll[0]
-          this.selectGame.langDependence = poll[1]
+          this.selectGame.publisher = data.querySelector("link[type*='boardgamepublisher']");
+          this.selectGame.suggestPlayer = data.getElementsByTagName("poll")[0];
+          this.selectGame.langDependence = data.getElementsByTagName("poll")[2];
         })
         .finally(() => {
+          console.log(this.selectGame)
           this.isDisplay = true;
           this.searchWords = "";
         })
