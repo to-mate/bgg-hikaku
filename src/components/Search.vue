@@ -6,8 +6,10 @@
 
     <div v-bind:class="{ searchCandidates: games.length !== 0 }">
       <div v-for="(game, index) in games">
-        <div v-if="index < 10" v-bind:class="game.id" v-on:click="searchDetail">
-          <p>{{ game.name }}</p>
+        <div v-if="index < 10" v-on:click="searchDetail">
+          <p v-bind:class="game.id">
+            {{ game.name }}
+          </p>
         </div>
       </div>
     </div>
@@ -15,21 +17,29 @@
 </template>
 
 <script>
-const baseURI = "https://www.boardgamegeek.com/xmlapi2/search?query=";
+const baseURI = "https://www.boardgamegeek.com/xmlapi/";
+const baseURIVer2 = "https://www.boardgamegeek.com/xmlapi2/";
 
 export default {
   name: "search",
   data: function() {
     return {
       searchWords: "",
-      games: []
+      games: [],
+      selectGame: {
+        name: "",
+        published: "",
+        time: "",
+        thumbnail: "",
+
+      }
     };
   },
   methods: {
     searchGames() {
       this.games = [];
       if(this.searchWords !== "") {
-        const URI = baseURI + this.searchWords + "&type=boardgame";
+        const URI = baseURIVer2 + "search?query=" + this.searchWords + "&type=boardgame";
         this.$axios
           .get(URI, {
             timeout: 2000,
@@ -49,7 +59,22 @@ export default {
       }
     },
     searchDetail(event) {
-      console.log(event.target.class)
+      const gameId = event.target.className;
+      this.game.name = event.target.value;
+      const URI = baseURI + "boardgame/" + gameId;
+      this.$axios
+        .get(URI, {
+          timeout: 2000,
+          responseType: "document"
+        })
+        .then(response => {
+          const data = response.data;
+          const year = data.querySelector("yearpublished");
+          const player = {
+            min: data.querySelector("minplayers"),
+            max: data.querySelector("maxplayers")
+          };
+        })
     }
   }
 }
