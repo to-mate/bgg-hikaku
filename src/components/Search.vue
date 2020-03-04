@@ -1,60 +1,63 @@
 <template>
-  <div class="search">
-    <v-text-field single-line box label="Game" type="text" v-model="searchWords"v-on:input="searchGames()"/>
-    <v-list v-bind:class="{ searchCandidates: games.length !== 0 }" v-if="searchWords !== ''">
-      <template v-for="(game, index) in games">
-        <v-list-tile v-if="index < 10" v-on:click="searchDetail">
-          <p :class="game.id">
-            {{ game.name }}
-          </p>
-        </v-list-tile>
-      </template>
-    </v-list>
-    <v-layout justify-center>
-      <v-card v-if="isDisplay">
-        <v-img :src="selectGame.thumbnail.innerHTML" width="540px" height="500px" style="object-fit: scale-down"></v-img>
-        <v-card-title class="display-1 font-weight-bold">{{ selectGame.name }}</v-card-title>
-        <v-list v-for="(content, key) in selectGame" v-if="key !== 'name' && key !== 'thumbnail' && content !== false">
-          <v-list-tile>
-            <v-list-tile-avatar>
-              <v-icon>{{ icons[key] }}</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content v-if="key === 'suggestPlayer'">
-              <v-list-tile-title>
-                {{ displaySuggestPlayer() }}
-              </v-list-tile-title>
-              <v-list-tile-sub-title v-if="key === 'suggestPlayer'">
-                User Suggested Number of Players
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-            <v-list-tile-content v-else-if="key === 'langDependence'">
-              <v-list-tile-title>
-                {{ displayLangDependence() }}
-              </v-list-tile-title>
-              <v-list-tile-sub-title>
-                {{ searchEval() }}
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-            <v-list-tile-content v-else-if="key === 'numPlayer'">
-              <v-list-tile-title>
-                {{ content.min.getAttribute("value") }} ~ {{ content.max.getAttribute("value") }}
-              </v-list-tile-title>
-            </v-list-tile-content>
-            <v-list-tile-content v-else>
-              <v-list-tile-title>
-                {{ content.getAttribute("value") }}
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+  <v-card>
+    <v-card-text>
+      <div class="search">
+        <v-text-field single-line box label="Game" type="text" v-model="searchWords" v-on:input="searchGames()"/>
+        <v-list v-bind:class="{ searchCandidates: games.length !== 0 }" v-if="searchWords !== ''">
+          <template v-for="(game, index) in games">
+            <v-list-tile v-if="index < 10" v-on:click="searchDetail" :key="index">
+              <p :class="game.id">
+                {{ game.name }}
+              </p>
+            </v-list-tile>
+          </template>
         </v-list>
-      </v-card>
-    </v-layout>
-  </div>
+        <v-layout justify-center>
+          <v-card v-if="isDisplay">
+            <v-img :src="selectGame.thumbnail.innerHTML" width="540px" height="500px" style="object-fit: scale-down"/>
+            <v-card-title class="display-1 font-weight-bold">{{ selectGame.name }}</v-card-title>
+            <v-list v-for="(content, key) in selectGame" :key="key" v-if="key !== 'name' && key !== 'thumbnail' && content !== false">
+              <v-list-tile>
+                <v-list-tile-avatar>
+                  <v-icon>{{ icons[key] }}</v-icon>
+                </v-list-tile-avatar>
+                <v-list-tile-content v-if="key === 'suggestPlayer'">
+                  <v-list-tile-title>
+                    {{ displaySuggestPlayer() }}
+                  </v-list-tile-title>
+                  <v-list-tile-sub-title v-if="key === 'suggestPlayer'">
+                    User Suggested Number of Players
+                  </v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-content v-else-if="key === 'langDependence'">
+                  <v-list-tile-title>
+                    {{ displayLangDependence() }}
+                  </v-list-tile-title>
+                  <v-list-tile-sub-title>
+                    {{ searchEval() }}
+                  </v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-content v-else-if="key === 'numPlayer'">
+                  <v-list-tile-title>yarn add vuedraggable
+                    {{ content.min.getAttribute("value") }} ~ {{ content.max.getAttribute("value") }}
+                  </v-list-tile-title>
+                </v-list-tile-content>
+                <v-list-tile-content v-else>
+                  <v-list-tile-title>
+                    {{ content.getAttribute("value") }}
+                  </v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </v-card>
+        </v-layout>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
 import _ from 'lodash';
-
 
 const baseURI = "https://www.boardgamegeek.com/xmlapi2/";
 
@@ -93,10 +96,10 @@ export default {
     };
   },
   methods: {
-    searchGames: _.throttle(function(){
+    searchGames: _.throttle(function() {
       this.games = [];
-      if(this.searchWords !== "") {
-        const URI = baseURI+ "search?query=" + this.searchWords + "&type=boardgame";
+      if (this.searchWords !== "") {
+        const URI = `${baseURI}search?query=${this.searchWords}&type=boardgame`;
         this.$axios
           .get(URI, {
             responseType: "document"
@@ -105,7 +108,7 @@ export default {
             const xml = response.data;
             const items = xml.getElementsByTagName("item");
             for(let item of items) {
-              let game = {
+              const game = {
                 id: item.id,
                 name: item.firstElementChild.getAttribute("value")
               };
@@ -115,9 +118,9 @@ export default {
       }
     }, 500),
     searchDetail(event) {
-      const targetGame = event.target.firstElementChild;
+      const targetGame = event.currentTarget.firstElementChild;
       this.selectGame.name = targetGame.innerHTML;
-      const URI = baseURI + "thing?id=" + targetGame.className + "type=boardgame";
+      const URI = `${baseURI}thing?id=${targetGame.className}type=boardgame`;
       this.$axios
         .get(URI, {
           responseType: "document"
@@ -139,7 +142,7 @@ export default {
           this.isDisplay = true;
           this.searchWords = "";
         })
-        .catch((error) => {
+        .catch(error => {
           console.log("sorry, error has occured by backend.");
           console.log(error);
         });
@@ -167,26 +170,26 @@ export default {
         let percentage = level.getAttribute("numvotes") / poll.getAttribute("totalvotes")
         if(percentage > maxPercentage) {
           bestLevel = level.getAttribute("level");
-          maxPercentage = percentage
+          maxPercentage = percentage;
         }
       }
       return bestLevel;
     },
     searchEval() {
       const bestLevel = this.displayLangDependence();
-      for(let rank in this.evals) {
-        if(rank === bestLevel) {
+      for (let rank in this.evals) {
+        if (rank === bestLevel) {
           return this.evals[rank];
         }
       }
       return "";
     }
   }
-}
+};
 </script>
 
 <style scoped>
-  .searchCandidates {
-    border: solid 1px #000000;
-  }
+.searchCandidates {
+  border: solid 1px #000000;
+}
 </style>
